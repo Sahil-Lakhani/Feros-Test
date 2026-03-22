@@ -1,0 +1,80 @@
+interface CurrencyInputProps {
+  value: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;          // default 0.05
+  label?: string;
+  helpText?: string;
+  className?: string;
+}
+
+export function CurrencyInput({
+  value,
+  onChange,
+  min,
+  max,
+  step = 0.05,
+  label,
+  helpText,
+  className = '',
+}: CurrencyInputProps) {
+  const canDecrement = min === undefined || value - step >= min - 1e-9;
+  const canIncrement = max === undefined || value + step <= max + 1e-9;
+
+  const handleDecrement = () => {
+    if (!canDecrement) return;
+    const next = Math.round((value - step) * 1e9) / 1e9;
+    onChange(min !== undefined ? Math.max(min, next) : next);
+  };
+
+  const handleIncrement = () => {
+    if (!canIncrement) return;
+    const next = Math.round((value + step) * 1e9) / 1e9;
+    onChange(max !== undefined ? Math.min(max, next) : next);
+  };
+
+  const display = '€' + value.toFixed(2);
+
+  return (
+    <div className={`flex flex-col gap-1 ${className}`}>
+      {label && (
+        <span className="text-xs font-medium text-zinc-400">{label}</span>
+      )}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={handleDecrement}
+          disabled={!canDecrement}
+          className={`w-9 h-9 flex items-center justify-center rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-300 hover:bg-zinc-700 transition-all duration-150 select-none ${
+            !canDecrement ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'
+          }`}
+          aria-label="Decrease"
+        >
+          <span className="text-base leading-none">−</span>
+        </button>
+
+        <div className="flex-1 flex items-center justify-center min-w-[5rem]">
+          <span className="text-lg font-semibold text-amber-400 tabular-nums">
+            {display}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleIncrement}
+          disabled={!canIncrement}
+          className={`w-9 h-9 flex items-center justify-center rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-300 hover:bg-zinc-700 transition-all duration-150 select-none ${
+            !canIncrement ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'
+          }`}
+          aria-label="Increase"
+        >
+          <span className="text-base leading-none">+</span>
+        </button>
+      </div>
+      {helpText && (
+        <span className="text-xs text-zinc-500">{helpText}</span>
+      )}
+    </div>
+  );
+}
