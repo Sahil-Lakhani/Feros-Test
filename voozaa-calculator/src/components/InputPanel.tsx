@@ -1,6 +1,4 @@
 import type { CalculatorInputs } from '../types';
-import { STATION_MODELS } from '../types';
-import { StationSelector } from './StationSelector';
 import { NumberStepper } from './ui/NumberStepper';
 import { CurrencyInput } from './ui/CurrencyInput';
 import { PercentageInput } from './ui/PercentageInput';
@@ -29,11 +27,6 @@ function SectionCard({ children }: { children: React.ReactNode }) {
 }
 
 export function InputPanel({ inputs, onChange, onReset }: InputPanelProps) {
-  const machineCost = STATION_MODELS.reduce(
-    (sum, model) => sum + inputs[model.key] * model.price,
-    0
-  );
-
   return (
     <div className="flex flex-col">
       {/* Header */}
@@ -50,26 +43,7 @@ export function InputPanel({ inputs, onChange, onReset }: InputPanelProps) {
         )}
       </div>
 
-      {/* Section 1: STATIONEN */}
-      <div className="mb-6">
-        <SectionLabel>Stationen</SectionLabel>
-        <SectionCard>
-          <StationSelector
-            inputs={inputs}
-            onChange={onChange}
-          />
-          {machineCost > 0 && (
-            <p className="mt-3 text-xs text-zinc-400">
-              Maschinenkosten:{' '}
-              <span className="text-zinc-300 font-medium">
-                €{machineCost.toLocaleString('de-DE')}
-              </span>
-            </p>
-          )}
-        </SectionCard>
-      </div>
-
-      {/* Section 2: BETRIEB */}
+      {/* Section 1: BETRIEB */}
       <div className="mb-6">
         <SectionLabel>Betrieb</SectionLabel>
         <SectionCard>

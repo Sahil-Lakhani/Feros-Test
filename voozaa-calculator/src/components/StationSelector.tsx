@@ -8,7 +8,7 @@ interface StationSelectorProps {
 
 export function StationSelector({ inputs, onChange }: StationSelectorProps) {
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {STATION_MODELS.map((model) => {
         const qty = inputs[model.key];
         const isActive = qty > 0;
@@ -22,6 +22,22 @@ export function StationSelector({ inputs, onChange }: StationSelectorProps) {
                 : 'border-zinc-800 bg-zinc-900'
             }`}
           >
+            {/* Placeholder image */}
+            <div className={`w-full aspect-[4/3] rounded-lg flex flex-col items-center justify-center gap-1.5 transition-all duration-150 ${
+              isActive ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-zinc-800/60 border border-zinc-700/50'
+            }`}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                className={`w-7 h-7 transition-colors duration-150 ${isActive ? 'text-amber-400/70' : 'text-zinc-600'}`}>
+                <rect x="5" y="2" width="14" height="20" rx="2" />
+                <rect x="8" y="5" width="8" height="5" rx="1" />
+                <circle cx="12" cy="15" r="1.5" />
+                <path d="M10 18h4" />
+              </svg>
+              <span className={`text-[10px] font-medium transition-colors duration-150 ${isActive ? 'text-amber-400/60' : 'text-zinc-600'}`}>
+                {model.capacity} Slots
+              </span>
+            </div>
+
             {/* Model info */}
             <div className="flex flex-col gap-0.5">
               <span className="text-sm font-semibold text-zinc-100">
