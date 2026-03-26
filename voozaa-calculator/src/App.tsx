@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import logoDark from './assets/Logo-Dark.png';
 import logoLight from './assets/Logo-Light.png';
+import { Footer } from './components/Footer';
 import { useCalculator } from './hooks/useCalculator';
 import { InputPanel } from './components/InputPanel';
 import { ResultsPanel } from './components/ResultsPanel';
@@ -107,10 +108,7 @@ export default function App() {
 
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 mt-12 py-4 text-center dark:border-zinc-800">
-        <p className="text-xs text-zinc-400 dark:text-zinc-600">Voozaa Investitionsrechner — Reverse-Engineered Model</p>
-      </footer>
+      <Footer isDark={isDark} />
     </div>
   );
 }
