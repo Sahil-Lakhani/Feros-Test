@@ -57,18 +57,18 @@ export interface StationModel {
 }
 
 export const DEFAULT_INPUTS: CalculatorInputs = {
-  qty_M: 1,
+  qty_M: 5,
   qty_L: 0,
   qty_LWP: 0,
   qty_XL: 0,
-  rentalsPerDay: 8,
-  openingDays: 30,
-  hourlyRate: 1.00,
+  rentalsPerDay: 1.5,
+  openingDays: 27,
+  hourlyRate: 4.00,
   rentalHours: 2,
-  maxDaily: 10.00,
+  maxDaily: 15.00,
   deposit: 45,
-  pbLostRate: 0.05,
-  merchantShare: 0.20,
+  pbLostRate: 0.03,
+  merchantShare: 0.10,
   timeoutDays: 3,
 };
 
