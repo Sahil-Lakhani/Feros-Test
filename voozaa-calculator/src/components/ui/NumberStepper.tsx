@@ -40,7 +40,7 @@ export function NumberStepper({
     onChange(max !== undefined ? Math.min(max, next) : next);
   };
 
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleFocus = () => {
     const display = format ? format(value) : String(value);
     setRaw(display);
   };
