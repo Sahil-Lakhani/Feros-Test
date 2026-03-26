@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useCalculator } from './hooks/useCalculator';
 import { InputPanel } from './components/InputPanel';
 import { ResultsPanel } from './components/ResultsPanel';
@@ -7,22 +8,66 @@ import { STATION_MODELS } from './types';
 export default function App() {
   const { inputs, outputs, updateInput, resetInputs } = useCalculator();
 
+  const [isDark, setIsDark] = useState<boolean>(
+    () => localStorage.getItem('theme') !== 'light'
+  );
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  }, [isDark]);
+
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen bg-[#F8F8F8] text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       {/* Header */}
-      <header className="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-sm sticky top-0 z-10">
+      <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10 dark:border-zinc-800 dark:bg-zinc-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-amber-500 flex items-center justify-center">
-              <span className="text-zinc-950 font-bold text-xs">V</span>
+            <div className="w-7 h-7 rounded-lg bg-[#C2410C] flex items-center justify-center dark:bg-amber-500">
+              <span className="text-white font-bold text-xs dark:text-zinc-950">V</span>
             </div>
             <div>
-              <h1 className="text-sm font-semibold text-zinc-100">Voozaa Rechner</h1>
-              <p className="text-xs text-zinc-500 hidden sm:block">Investitionsrechner</p>
+              <h1 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Voozaa Rechner</h1>
+              <p className="text-xs text-zinc-400 hidden sm:block dark:text-zinc-500">Investitionsrechner</p>
             </div>
           </div>
-          <div className="text-xs text-zinc-500 hidden md:block">
-            {outputs.totalStations} Station(en) · €{outputs.machineCost.toLocaleString('de-DE')} Maschinen
+
+          <div className="flex items-center gap-3">
+            <div className="text-xs text-zinc-400 hidden md:block dark:text-zinc-500">
+              {outputs.totalStations} Station(en) · €{outputs.machineCost.toLocaleString('de-DE')} Maschinen
+            </div>
+
+            {/* Theme toggle button */}
+            <button
+              type="button"
+              onClick={() => setIsDark(prev => !prev)}
+              className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-zinc-500 hover:text-zinc-900 hover:bg-gray-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-zinc-700 transition-all duration-150 cursor-pointer"
+              aria-label={isDark ? 'Zum hellen Modus wechseln' : 'Zum dunklen Modus wechseln'}
+            >
+              {isDark ? (
+                /* Sun icon — shown in dark mode to switch to light */
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  className="w-4 h-4">
+                  <circle cx="12" cy="12" r="5"/>
+                  <line x1="12" y1="1" x2="12" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="23"/>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                  <line x1="1" y1="12" x2="3" y2="12"/>
+                  <line x1="21" y1="12" x2="23" y2="12"/>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+              ) : (
+                /* Moon icon — shown in light mode to switch to dark */
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  className="w-4 h-4">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              )}
+            </button>
           </div>
         </div>
       </header>
@@ -32,15 +77,15 @@ export default function App() {
         {/* Top: Station selector — full width, 4 cards in a row */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <p className="uppercase text-xs font-semibold tracking-widest text-zinc-500">Stationen</p>
+            <p className="uppercase text-xs font-semibold tracking-widest text-zinc-400 dark:text-zinc-500">Stationen</p>
             {outputs.machineCost > 0 && (
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 Maschinenkosten:{' '}
-                <span className="text-zinc-300 font-medium">
+                <span className="text-zinc-700 font-medium dark:text-zinc-300">
                   €{outputs.machineCost.toLocaleString('de-DE')}
                 </span>
                 {' '}·{' '}
-                <span className="text-zinc-500">
+                <span className="text-zinc-400 dark:text-zinc-500">
                   {STATION_MODELS.filter(m => inputs[m.key] > 0).map(m => `${inputs[m.key]}×${m.id}`).join(', ')}
                 </span>
               </p>
@@ -67,8 +112,8 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800 mt-12 py-4 text-center">
-        <p className="text-xs text-zinc-600">Voozaa Investitionsrechner — Reverse-Engineered Model</p>
+      <footer className="border-t border-gray-200 mt-12 py-4 text-center dark:border-zinc-800">
+        <p className="text-xs text-zinc-400 dark:text-zinc-600">Voozaa Investitionsrechner — Reverse-Engineered Model</p>
       </footer>
     </div>
   );

@@ -16,7 +16,7 @@ export function TimeoutDaysChips({
   return (
     <div className="flex flex-col gap-1">
       {label && (
-        <span className="text-xs font-medium text-zinc-400">{label}</span>
+        <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{label}</span>
       )}
       <div className="flex flex-wrap gap-2">
         {DAYS.map((day) => {
@@ -28,8 +28,8 @@ export function TimeoutDaysChips({
               onClick={() => onChange(day)}
               className={`px-3 py-1.5 rounded-lg text-sm cursor-pointer transition-all duration-150 border select-none ${
                 isSelected
-                  ? 'bg-amber-500/15 text-amber-400 border-amber-500/60 font-semibold'
-                  : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:border-amber-500/40'
+                  ? 'bg-[#FFF7ED] text-black border-[#F59E0B] font-semibold dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/60'
+                  : 'bg-[#F0F0EE] text-zinc-700 border-[#0F0F0F] hover:border-[#F59E0B]/60 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700 dark:hover:border-amber-500/40'
               }`}
             >
               {day}
@@ -38,7 +38,7 @@ export function TimeoutDaysChips({
         })}
       </div>
       {helpText && (
-        <span className="text-xs text-zinc-500">{helpText}</span>
+        <span className="text-xs text-zinc-400 dark:text-zinc-500">{helpText}</span>
       )}
     </div>
   );

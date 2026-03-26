@@ -9,11 +9,11 @@ interface MetricRowProps {
 }
 
 const variantClass: Record<NonNullable<MetricRowProps['variant']>, string> = {
-  default: 'text-zinc-100 font-semibold tabular-nums',
-  negative: 'text-red-400 font-semibold tabular-nums',
-  positive: 'text-emerald-400 font-semibold tabular-nums',
-  highlight: 'text-zinc-100 font-bold text-base tabular-nums',
-  amber: 'text-amber-400 font-semibold tabular-nums',
+  default: 'text-zinc-900 font-semibold tabular-nums dark:text-zinc-100',
+  negative: 'text-red-600 font-semibold tabular-nums dark:text-red-400',
+  positive: 'text-emerald-700 font-semibold tabular-nums dark:text-emerald-400',
+  highlight: 'text-zinc-900 font-bold text-base tabular-nums dark:text-zinc-100',
+  amber: 'text-[#C2410C] font-semibold tabular-nums dark:text-amber-400',
 };
 
 function formatValue(value: number, format: MetricRowProps['format'], decimals?: number): string {
@@ -49,10 +49,10 @@ export function MetricRow({
 
   return (
     <div className={`flex justify-between items-center py-2.5 transition-all duration-150 ${className}`}>
-      <span className="text-zinc-400 text-sm">{label}</span>
+      <span className="text-zinc-500 dark:text-zinc-400 text-sm">{label}</span>
       <span className={valueClass}>
         {displayValue}
-        {suffix && <span className="text-zinc-500 font-normal text-xs ml-1">{suffix}</span>}
+        {suffix && <span className="text-zinc-400 dark:text-zinc-500 font-normal text-xs ml-1">{suffix}</span>}
       </span>
     </div>
   );

@@ -12,7 +12,7 @@ interface InputPanelProps {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="uppercase text-xs font-semibold tracking-widest text-zinc-500 mb-3">
+    <p className="uppercase text-xs font-semibold tracking-widest text-zinc-400 dark:text-zinc-500 mb-3">
       {children}
     </p>
   );
@@ -20,7 +20,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 function SectionCard({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+    <div className="bg-[#F0F0EE] border border-[#0F0F0F] dark:bg-zinc-900 dark:border-zinc-800 rounded-xl p-4">
       {children}
     </div>
   );
@@ -31,12 +31,12 @@ export function InputPanel({ inputs, onChange, onReset }: InputPanelProps) {
     <div className="flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-zinc-100">Einstellungen</h2>
+        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Einstellungen</h2>
         {onReset && (
           <button
             type="button"
             onClick={onReset}
-            className="text-xs text-zinc-400 hover:text-zinc-200 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-1.5 rounded-lg transition-all duration-150 cursor-pointer"
+            className="text-xs text-zinc-500 hover:text-zinc-900 bg-gray-100 hover:bg-gray-200 border border-gray-300 dark:text-zinc-400 dark:hover:text-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:border-zinc-700 px-3 py-1.5 rounded-lg transition-all duration-150 cursor-pointer"
           >
             Zurücksetzen
           </button>
