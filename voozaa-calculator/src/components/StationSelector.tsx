@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import type { CalculatorInputs } from '../types';
 import { STATION_MODELS } from '../types';
+import img8S  from '../assets/8-S.png';
+import img12M from '../assets/12-M.png';
+import img24L from '../assets/24-L.png';
+import img48XL from '../assets/48-XL.png';
+
+const MODEL_IMAGES: Record<string, string> = {
+  M:   img8S,
+  L:   img12M,
+  LWP: img24L,
+  XL:  img48XL,
+};
 
 interface StationSelectorProps {
   inputs: Pick<CalculatorInputs, 'qty_M' | 'qty_L' | 'qty_LWP' | 'qty_XL'>;
@@ -62,29 +73,23 @@ export function StationSelector({ inputs, onChange }: StationSelectorProps) {
                 : 'border-[#0F0F0F] dark:border-zinc-800 bg-[#F0F0EE] dark:bg-zinc-900'
             }`}
           >
-            {/* Placeholder image */}
-            <div className={`w-full aspect-[4/3] rounded-lg flex flex-col items-center justify-center gap-1.5 transition-all duration-150 ${
-              isActive ? 'bg-orange-50 dark:bg-amber-500/10 border border-orange-200/50 dark:border-amber-500/20' : 'bg-gray-100/60 dark:bg-zinc-800/60 border border-gray-200/50 dark:border-zinc-700/50'
+            {/* Station image */}
+            <div className={`w-full aspect-[4/3] rounded-lg overflow-hidden flex items-center justify-center transition-all duration-150 ${
+              isActive
+                ? 'bg-gradient-to-b from-amber-200 via-orange-100 to-yellow-50 dark:from-amber-500/20 dark:via-zinc-800 dark:to-zinc-800'
+                : 'bg-gradient-to-b from-amber-100 via-orange-50 to-yellow-50 dark:from-zinc-700/50 dark:via-zinc-800/80 dark:to-zinc-800/80'
             }`}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                className={`w-7 h-7 transition-colors duration-150 ${isActive ? 'text-orange-500/70 dark:text-amber-400/70' : 'text-zinc-500 dark:text-zinc-600'}`}>
-                <rect x="5" y="2" width="14" height="20" rx="2" />
-                <rect x="8" y="5" width="8" height="5" rx="1" />
-                <circle cx="12" cy="15" r="1.5" />
-                <path d="M10 18h4" />
-              </svg>
-              <span className={`text-[10px] font-medium transition-colors duration-150 ${isActive ? 'text-orange-500/60 dark:text-amber-400/60' : 'text-zinc-500 dark:text-zinc-600'}`}>
-                {model.capacity} Slots
-              </span>
+              <img
+                src={MODEL_IMAGES[model.id]}
+                alt={model.label}
+                className="w-full h-full object-contain"
+              />
             </div>
 
             {/* Model info */}
             <div className="flex flex-col gap-0.5">
               <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                 {model.label}
-              </span>
-              <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                {model.capacity} PBs
               </span>
               <span className="text-sm font-semibold text-[#C2410C] dark:text-amber-400">
                 €{model.price.toLocaleString('de-DE')}

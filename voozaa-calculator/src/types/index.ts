@@ -73,8 +73,8 @@ export const DEFAULT_INPUTS: CalculatorInputs = {
 };
 
 export const STATION_MODELS: StationModel[] = [
-  { id: 'M',   key: 'qty_M',   label: 'Model M',    capacity: 12, price: 1200 },
-  { id: 'L',   key: 'qty_L',   label: 'Model L',    capacity: 24, price: 1900 },
-  { id: 'LWP', key: 'qty_LWP', label: 'Model L+WP', capacity: 24, price: 2000 },
-  { id: 'XL',  key: 'qty_XL',  label: 'Model XL',   capacity: 32, price: 2800 },
+  { id: 'M',   key: 'qty_M',   label: 'Model S x 8PB',   capacity: 12, price: 1200 },
+  { id: 'L',   key: 'qty_L',   label: 'Model M x 12PB',  capacity: 24, price: 1900 },
+  { id: 'LWP', key: 'qty_LWP', label: 'Model L x 24PB',  capacity: 24, price: 2000 },
+  { id: 'XL',  key: 'qty_XL',  label: 'Model XL x 48PB', capacity: 32, price: 2800 },
 ];

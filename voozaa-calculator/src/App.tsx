@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import logoDark from './assets/Logo-Dark.png';
+import logoLight from './assets/Logo-Light.png';
 import { useCalculator } from './hooks/useCalculator';
 import { InputPanel } from './components/InputPanel';
 import { ResultsPanel } from './components/ResultsPanel';
@@ -21,15 +23,9 @@ export default function App() {
     <div className="min-h-screen bg-[#F8F8F8] text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10 dark:border-zinc-800 dark:bg-zinc-900/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-[#C2410C] flex items-center justify-center dark:bg-amber-500">
-              <span className="text-white font-bold text-xs dark:text-zinc-950">V</span>
-            </div>
-            <div>
-              <h1 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Voozaa Rechner</h1>
-              <p className="text-xs text-zinc-400 hidden sm:block dark:text-zinc-500">Investitionsrechner</p>
-            </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-1 flex items-center justify-between">
+          <div className="flex items-center">
+            <img src={isDark ? logoDark : logoLight} alt="Voozaa" className="h-12 w-auto object-contain" />
           </div>
 
           <div className="flex items-center gap-3">
