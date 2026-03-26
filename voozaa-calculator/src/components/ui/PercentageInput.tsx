@@ -89,17 +89,19 @@ export function PercentageInput({
         </button>
 
         <div className="flex-1 flex items-center justify-center min-w-[4rem]">
-          <input
-            type="text"
-            inputMode="decimal"
-            value={displayValue}
-            onFocus={handleFocus}
-            onChange={handleChange}
-            onBlur={commit}
-            onKeyDown={handleKeyDown}
-            className="w-full text-center text-lg font-semibold text-[#C2410C] dark:text-amber-400 tabular-nums bg-transparent border-none outline-none focus:outline-none focus:ring-0 cursor-text"
-          />
-          <span className="text-lg font-semibold text-[#C2410C] dark:text-amber-400 tabular-nums select-none">%</span>
+          <div className="flex items-center gap-0.5">
+            <input
+              type="text"
+              inputMode="decimal"
+              value={displayValue}
+              onFocus={handleFocus}
+              onChange={handleChange}
+              onBlur={commit}
+              onKeyDown={handleKeyDown}
+              className="w-14 text-right text-lg font-semibold text-[#C2410C] dark:text-amber-400 tabular-nums bg-transparent border-none outline-none focus:outline-none focus:ring-0 cursor-text"
+            />
+            <span className="text-lg font-semibold text-[#C2410C] dark:text-amber-400 tabular-nums select-none">%</span>
+          </div>
         </div>
 
         <button
