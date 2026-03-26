@@ -24,9 +24,9 @@ export default function App() {
       {/* Header */}
       <header className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10 dark:border-zinc-800 dark:bg-zinc-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-1 flex items-center justify-between">
-          <div className="flex items-center">
+          <a href="https://www.voltspot.io/" target="_blank" rel="noopener noreferrer" className="flex items-center">
             <img src={isDark ? logoDark : logoLight} alt="Voozaa" className="h-12 w-auto object-contain" />
-          </div>
+          </a>
 
           <div className="flex items-center gap-3">
             <div className="text-xs text-zinc-400 hidden md:block dark:text-zinc-500">
