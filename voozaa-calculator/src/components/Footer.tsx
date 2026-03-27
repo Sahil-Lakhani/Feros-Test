@@ -218,7 +218,7 @@ export function Footer({ isDark }: FooterProps) {
           {/* CTA card */}
           <div {...fadeUp(800, 'col-span-2 lg:col-span-1')}>
             <a
-              href="mailto:info@voltspot.io"
+              href="https://www.voltspot.io/kontakt/"
               className="flex items-center gap-4 p-5 rounded-2xl
                 bg-transparent
                 border-2 border-[#C2410C] dark:border-amber-500
@@ -245,7 +245,7 @@ export function Footer({ isDark }: FooterProps) {
           {...fadeUp(900, 'mt-10 pt-6 border-t border-gray-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-2')}
         >
           <p className="text-sm text-zinc-400 dark:text-zinc-600">
-            © {new Date().getFullYear()} VoltSpot. Alle Rechte vorbehalten.
+            © {new Date().getFullYear()} VoltSpot. Stay Changed. Stay Connected.
           </p>
           <p className="text-sm text-zinc-400 dark:text-zinc-600">
             Powerbank-Sharing-Lösung
