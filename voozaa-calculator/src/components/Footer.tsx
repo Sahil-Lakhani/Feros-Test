@@ -56,10 +56,10 @@ function LinkedInIcon() {
 
 const socialLinks = [
   { label: 'Instagram', href: 'https://www.instagram.com/voltspot.io', Icon: InstagramIcon },
-  { label: 'TikTok',    href: 'https://www.tiktok.com/@voltspot.io',   Icon: TikTokIcon },
-  { label: 'Facebook',  href: 'https://www.facebook.com/voltspot.io',  Icon: FacebookIcon },
-  { label: 'Threads',   href: 'https://www.threads.net/@voltspot.io',  Icon: ThreadsIcon },
-  { label: 'LinkedIn',  href: 'https://www.linkedin.com/company/voltspot', Icon: LinkedInIcon },
+  { label: 'TikTok',    href: 'https://www.tiktok.com/@voltspot.de?_r=1&_t=ZG-93E4fvCf1Mn',   Icon: TikTokIcon },
+  { label: 'Facebook',  href: 'https://www.facebook.com/Voltspot.eu/',  Icon: FacebookIcon },
+  { label: 'Threads',   href: 'https://www.threads.com/@voltspot.io?igshid=NTc4MTIwNjQ2YQ%3D%3D',  Icon: ThreadsIcon },
+  { label: 'LinkedIn',  href: 'https://www.linkedin.com/company/voltspot-io/', Icon: LinkedInIcon },
 ];
 
 export function Footer({ isDark }: FooterProps) {
