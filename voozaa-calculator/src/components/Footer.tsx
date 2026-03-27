@@ -6,8 +6,20 @@ interface FooterProps {
   isDark: boolean;
 }
 
-const infoLinks = ['Home', 'Partner werden', 'Werbetreibende', 'Franchise', 'Über Uns', 'Kontakt'];
-const legalLinks = ['Datenschutz', 'AGB', 'Impressum'];
+const infoLinks = [
+  { label: 'Home', href: 'https://www.voltspot.io/' },
+  { label: 'Partner werden', href: 'https://www.voltspot.io/partner-werden/' },
+  { label: 'Werbetreibende', href: 'https://www.voltspot.io/werbetreibende/' },
+  { label: 'Franchise', href: 'https://www.voltspot.io/franchise/' },
+  { label: 'Über Uns', href: 'https://www.voltspot.io/uber-uns/' },
+  { label: 'Kontakt', href: 'https://www.voltspot.io/kontakt/' }
+];
+
+const legalLinks = [
+  { label: 'Datenschutz', href: 'https://www.voltspot.io/datenschutz/' },
+  { label: 'AGB', href: 'https://www.voltspot.io/agb/' },
+  { label: 'Impressum', href: 'http://voltspot.io/impressum/' }
+];
 
 function InstagramIcon() {
   return (
@@ -178,15 +190,15 @@ export function Footer({ isDark }: FooterProps) {
             </h3>
             <ul className="space-y-2.5">
               {infoLinks.map((link) => (
-                <li key={link}>
+                <li key={link.label}>
                   <a
-                    href="https://www.voltspot.io/"
+                    href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-base text-zinc-500 dark:text-zinc-400 hover:text-[#C2410C] dark:hover:text-amber-400 hover:translate-x-1 transition-all duration-200 inline-flex items-center gap-1 group"
                   >
                     <span className="w-0 overflow-hidden group-hover:w-2 transition-all duration-200 text-[#C2410C] dark:text-amber-400 text-xs">›</span>
-                    {link}
+                    {link.label}
                   </a>
                 </li>
               ))}
@@ -200,15 +212,15 @@ export function Footer({ isDark }: FooterProps) {
             </h3>
             <ul className="space-y-2.5">
               {legalLinks.map((link) => (
-                <li key={link}>
+                <li key={link.label}>
                   <a
-                    href="https://www.voltspot.io/"
+                    href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-base text-zinc-500 dark:text-zinc-400 hover:text-[#C2410C] dark:hover:text-amber-400 hover:translate-x-1 transition-all duration-200 inline-flex items-center gap-1 group"
                   >
                     <span className="w-0 overflow-hidden group-hover:w-2 transition-all duration-200 text-[#C2410C] dark:text-amber-400 text-xs">›</span>
-                    {link}
+                    {link.label}
                   </a>
                 </li>
               ))}
