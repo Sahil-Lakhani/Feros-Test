@@ -7,14 +7,14 @@ import img24L from '../assets/24-L.png';
 import img48XL from '../assets/48-XL.png';
 
 const MODEL_IMAGES: Record<string, string> = {
-  M:   img8S,
-  L:   img12M,
-  LWP: img24L,
-  XL:  img48XL,
+  S:  img8S,
+  M:  img12M,
+  L:  img24L,
+  XL: img48XL,
 };
 
 interface StationSelectorProps {
-  inputs: Pick<CalculatorInputs, 'qty_M' | 'qty_L' | 'qty_LWP' | 'qty_XL'>;
+  inputs: Pick<CalculatorInputs, 'qty_S' | 'qty_M' | 'qty_L' | 'qty_XL'>;
   onChange: (key: keyof CalculatorInputs, value: number) => void;
 }
 

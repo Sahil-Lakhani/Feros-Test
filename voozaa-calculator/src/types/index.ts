@@ -1,7 +1,7 @@
 export interface CalculatorInputs {
+  qty_S: number;
   qty_M: number;
   qty_L: number;
-  qty_LWP: number;
   qty_XL: number;
   rentalsPerDay: number;    // default 8, step 0.5 — vermietete Powerbanks pro Gerät / Tag
   openingDays: number;      // default 30, step 0.5 — Öffnungstage / Monat
@@ -49,17 +49,17 @@ export interface CalculatorOutputs {
 }
 
 export interface StationModel {
-  id: 'M' | 'L' | 'LWP' | 'XL';
-  key: 'qty_M' | 'qty_L' | 'qty_LWP' | 'qty_XL';
+  id: 'S' | 'M' | 'L' | 'XL';
+  key: 'qty_S' | 'qty_M' | 'qty_L' | 'qty_XL';
   label: string;
   capacity: number;
   price: number;
 }
 
 export const DEFAULT_INPUTS: CalculatorInputs = {
-  qty_M: 5,
+  qty_S: 5,
+  qty_M: 0,
   qty_L: 0,
-  qty_LWP: 0,
   qty_XL: 0,
   rentalsPerDay: 1.5,
   openingDays: 27,
@@ -73,8 +73,8 @@ export const DEFAULT_INPUTS: CalculatorInputs = {
 };
 
 export const STATION_MODELS: StationModel[] = [
-  { id: 'M',   key: 'qty_M',   label: 'Model S x 8PB',   capacity: 12, price: 1200 },
-  { id: 'L',   key: 'qty_L',   label: 'Model M x 12PB',  capacity: 24, price: 1900 },
-  { id: 'LWP', key: 'qty_LWP', label: 'Model L x 24PB',  capacity: 24, price: 2000 },
-  { id: 'XL',  key: 'qty_XL',  label: 'Model XL x 48PB', capacity: 32, price: 3500 },
+  { id: 'S',  key: 'qty_S',  label: 'Model S x 8PB',   capacity: 8,  price: 1000 },
+  { id: 'M',  key: 'qty_M',  label: 'Model M x 12PB',  capacity: 12, price: 1200 },
+  { id: 'L',  key: 'qty_L',  label: 'Model L x 24PB',  capacity: 24, price: 2000 },
+  { id: 'XL', key: 'qty_XL', label: 'Model XL x 32PB', capacity: 32, price: 3500 },
 ];

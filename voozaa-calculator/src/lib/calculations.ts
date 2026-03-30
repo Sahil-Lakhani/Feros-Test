@@ -8,8 +8,8 @@ export const PARTNER_FEE = 0.12;          // Partner fee on gross revenue
 export const SYSTEM_FEE = 0.08;           // System/platform fee on gross revenue
 
 // ─── INVESTMENT ───────────────────────────────────────────────────────────────
-export function calcMachineCost(qty_M: number, qty_L: number, qty_LWP: number, qty_XL: number): number {
-  return qty_M * 1200 + qty_L * 1900 + qty_LWP * 2000 + qty_XL * 2800;
+export function calcMachineCost(qty_S: number, qty_M: number, qty_L: number, qty_XL: number): number {
+  return qty_S * 1000 + qty_M * 1200 + qty_L * 2000 + qty_XL * 3500;
 }
 
 export function calcTotalInvestment(machineCost: number): number {
@@ -96,15 +96,15 @@ export function calcROI3Jahre(gewinn_Gesamt: number, machineCost: number): numbe
 // ─── MAIN CALCULATE FUNCTION ──────────────────────────────────────────────────
 export function calculate(inputs: CalculatorInputs): CalculatorOutputs {
   const {
-    qty_M, qty_L, qty_LWP, qty_XL,
+    qty_S, qty_M, qty_L, qty_XL,
     rentalsPerDay, openingDays,
     hourlyRate, rentalHours, maxDaily, deposit,
     pbLostRate, merchantShare, timeoutDays
   } = inputs;
 
   // Investment
-  const totalStations = qty_M + qty_L + qty_LWP + qty_XL;
-  const machineCost = calcMachineCost(qty_M, qty_L, qty_LWP, qty_XL);
+  const totalStations = qty_S + qty_M + qty_L + qty_XL;
+  const machineCost = calcMachineCost(qty_S, qty_M, qty_L, qty_XL);
   const totalInvestment = calcTotalInvestment(machineCost);
 
   // Revenue
