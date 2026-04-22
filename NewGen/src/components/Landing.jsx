@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Globe from './Globe';
 import Loader from './Loader';
+import useIsPhone from '../hooks/useIsPhone';
 
 const light = {
   bg: '#F4EADC',
@@ -34,6 +35,7 @@ const fonts = {
 const globalCSS = `
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
+html { scrollbar-gutter: stable; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, #root { margin: 0; padding: 0; }
 body {
@@ -59,6 +61,44 @@ button { font-family: inherit; cursor: none; border: none; background: none; }
   .hero-grid { grid-template-columns: 1fr !important; }
   .footer-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .metrics-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 640px) {
+  .hero-section { padding: 110px 20px 72px !important; }
+  .hero-grid { gap: 24px !important; }
+  .hero-grid > .hero-globe { order: -1; min-height: 320px !important; }
+  .hero-text h1 { font-size: clamp(40px, 9vw, 64px) !important; }
+  .hero-ctas { flex-direction: column !important; gap: 10px !important; }
+  .hero-ctas button { width: 100% !important; }
+  .hero-stats { gap: 24px !important; }
+  .hero-chip { display: none !important; }
+  .hero-drag-label { font-size: 10px !important; }
+
+  .nav-signin { display: none !important; }
+  .nav-cta { padding: 8px 14px !important; font-size: 13px !important; }
+
+  .features-section { padding: 80px 20px !important; }
+  .features-card { padding: 24px 20px !important; min-height: 200px !important; }
+
+  .metrics-section { padding: 80px 20px !important; }
+  .metrics-grid { gap: 20px !important; }
+  .metrics-number { font-size: clamp(44px, 11vw, 64px) !important; }
+
+  .testimonial-section { padding: 90px 20px !important; }
+
+  .cta-section { padding: 64px 16px !important; }
+  .cta-inner { padding: 56px 24px !important; }
+
+  .footer-section { padding: 56px 20px 28px !important; }
+  .footer-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 28px !important; }
+  .footer-brand { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 `;
 
@@ -93,11 +133,11 @@ function CustomCursor() {
   );
 }
 
-function Nav() {
+function Nav({ reveal = true }) {
   return (
     <motion.nav
       initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      animate={reveal ? { y: 0, opacity: 1 } : { y: -20, opacity: 0 }}
       transition={{ duration: 0.6, ease: EASE }}
       style={{
         position: 'fixed',
@@ -160,10 +200,11 @@ function Nav() {
         )}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <a href="#" style={{ fontSize: 14, color: light.ink, fontWeight: 500 }}>
+        <a href="#" className="nav-signin" style={{ fontSize: 14, color: light.ink, fontWeight: 500 }}>
           Sign in
         </a>
         <motion.button
+          className="nav-cta"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           style={{
@@ -182,15 +223,22 @@ function Nav() {
   );
 }
 
-function Hero({ paused }) {
+function Hero({ paused, reveal = true, globeRef, globeVisible = true, isPhone = false }) {
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 0.3], [0, -80]);
 
   const headline = ['Never', 'run', 'out', 'of', 'battery,'];
   const headlineAccent = 'anywhere.';
 
+  const hidden = { opacity: 0, y: 20 };
+  const hiddenUp = { opacity: 0, y: -10 };
+  const hiddenWord = { y: 30, opacity: 0 };
+  const hiddenPill = { opacity: 0, y: 10 };
+  const hiddenFade = { opacity: 0 };
+
   return (
     <section
+      className="hero-section"
       style={{
         background: light.bg,
         color: light.ink,
@@ -202,7 +250,7 @@ function Hero({ paused }) {
     >
       <motion.div
         style={{
-          y,
+          y: isPhone ? 0 : y,
           maxWidth: 1280,
           margin: '0 auto',
           display: 'grid',
@@ -212,10 +260,10 @@ function Hero({ paused }) {
         }}
         className="hero-grid"
       >
-        <div>
+        <div className="hero-text">
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={hiddenPill}
+            animate={reveal ? { opacity: 1, y: 0 } : hiddenPill}
             transition={{ duration: 0.6, ease: EASE }}
             style={{
               display: 'inline-flex',
@@ -253,20 +301,20 @@ function Hero({ paused }) {
             {headline.map((word, i) => (
               <motion.span
                 key={i}
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: i * 0.08, ease: EASE }}
+                initial={hiddenWord}
+                animate={reveal ? { y: 0, opacity: 1 } : hiddenWord}
+                transition={{ duration: 0.6, delay: 0.1 + i * 0.07, ease: EASE }}
                 style={{ display: 'inline-block', marginRight: '0.25em' }}
               >
                 {word}
               </motion.span>
             ))}
             <motion.span
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
+              initial={hiddenWord}
+              animate={reveal ? { y: 0, opacity: 1 } : hiddenWord}
               transition={{
                 duration: 0.6,
-                delay: headline.length * 0.08,
+                delay: 0.1 + headline.length * 0.07,
                 ease: EASE,
               }}
               style={{
@@ -280,9 +328,9 @@ function Hero({ paused }) {
           </h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6, ease: EASE }}
+            initial={hidden}
+            animate={reveal ? { opacity: 1, y: 0 } : hidden}
+            transition={{ duration: 0.6, delay: 0.55, ease: EASE }}
             style={{
               fontSize: 18,
               lineHeight: 1.55,
@@ -296,9 +344,10 @@ function Hero({ paused }) {
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.75, ease: EASE }}
+            className="hero-ctas"
+            initial={hidden}
+            animate={reveal ? { opacity: 1, y: 0 } : hidden}
+            transition={{ duration: 0.6, delay: 0.7, ease: EASE }}
             style={{ display: 'flex', gap: 12, marginBottom: 56, flexWrap: 'wrap' }}
           >
             <motion.button
@@ -333,9 +382,10 @@ function Hero({ paused }) {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.1 }}
+            className="hero-stats"
+            initial={hiddenFade}
+            animate={reveal ? { opacity: 1 } : hiddenFade}
+            transition={{ duration: 0.8, delay: 0.9 }}
             style={{ display: 'flex', gap: 48, flexWrap: 'wrap' }}
           >
             {[
@@ -371,6 +421,7 @@ function Hero({ paused }) {
         </div>
 
         <div
+          className="hero-globe"
           style={{
             position: 'relative',
             display: 'flex',
@@ -380,29 +431,52 @@ function Hero({ paused }) {
           }}
         >
           {/* Radial glow */}
+          {isPhone ? (
+            <div
+              style={{
+                position: 'absolute',
+                width: 560,
+                height: 560,
+                borderRadius: '50%',
+                background:
+                  'radial-gradient(circle, rgba(255,122,46,0.4) 0%, rgba(255,122,46,0) 65%)',
+                zIndex: 0,
+                pointerEvents: 'none',
+                opacity: 0.4,
+              }}
+            />
+          ) : (
+            <motion.div
+              animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              style={{
+                position: 'absolute',
+                width: 560,
+                height: 560,
+                borderRadius: '50%',
+                background:
+                  'radial-gradient(circle, rgba(255,122,46,0.4) 0%, rgba(255,122,46,0) 65%)',
+                zIndex: 0,
+                pointerEvents: 'none',
+              }}
+            />
+          )}
           <motion.div
-            animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            style={{
-              position: 'absolute',
-              width: 560,
-              height: 560,
-              borderRadius: '50%',
-              background:
-                'radial-gradient(circle, rgba(255,122,46,0.4) 0%, rgba(255,122,46,0) 65%)',
-              zIndex: 0,
-              pointerEvents: 'none',
-            }}
-          />
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <Globe size={500} paused={paused} />
-          </div>
+            ref={globeRef}
+            initial={false}
+            animate={{ opacity: globeVisible ? 1 : 0 }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+            style={{ position: 'relative', zIndex: 1 }}
+          >
+            <Globe size={isPhone ? 280 : 500} paused={paused} />
+          </motion.div>
 
           {/* Floating chip top-right */}
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 0.6, ease: EASE }}
+            className="hero-chip"
+            initial={hiddenUp}
+            animate={reveal ? { opacity: 1, y: 0 } : hiddenUp}
+            transition={{ delay: 0.75, duration: 0.6, ease: EASE }}
             style={{
               position: 'absolute',
               top: 40,
@@ -431,9 +505,10 @@ function Hero({ paused }) {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.6 }}
-            transition={{ delay: 2, duration: 0.8 }}
+            className="hero-drag-label"
+            initial={hiddenFade}
+            animate={reveal ? { opacity: 0.6 } : hiddenFade}
+            transition={{ delay: 1.1, duration: 0.8 }}
             style={{
               position: 'absolute',
               bottom: 10,
@@ -464,6 +539,7 @@ function Features() {
 
   return (
     <section
+      className="features-section"
       style={{
         background: dark.bg,
         color: dark.ink,
@@ -527,6 +603,7 @@ function Features() {
           {cards.map((c, i) => (
             <motion.div
               key={c.n}
+              className="features-card"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
@@ -584,6 +661,7 @@ function Metrics() {
   ];
   return (
     <section
+      className="metrics-section"
       style={{
         background: light.bg,
         color: light.ink,
@@ -609,6 +687,7 @@ function Metrics() {
             transition={{ duration: 0.6, delay: i * 0.08, ease: EASE }}
           >
             <div
+              className="metrics-number"
               style={{
                 fontFamily: fonts.display,
                 fontSize: 64,
@@ -640,6 +719,7 @@ function Metrics() {
 function Testimonial() {
   return (
     <section
+      className="testimonial-section"
       style={{
         background: dark.bg,
         color: dark.ink,
@@ -742,15 +822,17 @@ function Testimonial() {
   );
 }
 
-function CTA() {
+function CTA({ isPhone = false }) {
   return (
     <section
+      className="cta-section"
       style={{
         background: light.bg,
         padding: '100px 48px',
       }}
     >
       <div
+        className="cta-inner"
         style={{
           maxWidth: 1280,
           margin: '0 auto',
@@ -764,34 +846,64 @@ function CTA() {
           overflow: 'hidden',
         }}
       >
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-          style={{
-            position: 'absolute',
-            top: -100,
-            left: -100,
-            width: 400,
-            height: 400,
-            background:
-              'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%)',
-            pointerEvents: 'none',
-          }}
-        />
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-          style={{
-            position: 'absolute',
-            bottom: -150,
-            right: -100,
-            width: 500,
-            height: 500,
-            background:
-              'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%)',
-            pointerEvents: 'none',
-          }}
-        />
+        {isPhone ? (
+          <div
+            style={{
+              position: 'absolute',
+              top: -100,
+              left: -100,
+              width: 400,
+              height: 400,
+              background:
+                'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%)',
+              pointerEvents: 'none',
+            }}
+          />
+        ) : (
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+            style={{
+              position: 'absolute',
+              top: -100,
+              left: -100,
+              width: 400,
+              height: 400,
+              background:
+                'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%)',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+        {isPhone ? (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: -150,
+              right: -100,
+              width: 500,
+              height: 500,
+              background:
+                'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%)',
+              pointerEvents: 'none',
+            }}
+          />
+        ) : (
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+            style={{
+              position: 'absolute',
+              bottom: -150,
+              right: -100,
+              width: 500,
+              height: 500,
+              background:
+                'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%)',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
         <div style={{ position: 'relative', zIndex: 1 }}>
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
@@ -871,6 +983,7 @@ function Footer() {
   ];
   return (
     <footer
+      className="footer-section"
       style={{
         background: dark.bg,
         color: dark.ink,
@@ -888,7 +1001,7 @@ function Footer() {
           marginBottom: 64,
         }}
       >
-        <div>
+        <div className="footer-brand">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
             <div
               style={{
@@ -970,9 +1083,90 @@ function Footer() {
   );
 }
 
+function GlobeRevealOverlay({ phase, targetRect }) {
+  const [viewport, setViewport] = useState(() => ({
+    w: typeof window !== 'undefined' ? window.innerWidth : 1280,
+    h: typeof window !== 'undefined' ? window.innerHeight : 800,
+  }));
+
+  useEffect(() => {
+    const onResize = () =>
+      setViewport({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const globeSize = Math.round(Math.min(viewport.w, viewport.h) * 0.88);
+
+  const shouldShrink =
+    (phase === 'shrinking' || phase === 'done') && targetRect;
+  const target = shouldShrink
+    ? {
+        x: targetRect.cx - viewport.w / 2,
+        y: targetRect.cy - viewport.h / 2,
+        scale: targetRect.size / globeSize,
+      }
+    : { x: 0, y: 0, scale: 1 };
+
+  return (
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.5, ease: 'easeOut' } }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9000,
+        pointerEvents: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Ambient glow that tracks the globe */}
+      <motion.div
+        initial={{ opacity: 0.55, scale: 1 }}
+        animate={{
+          opacity: shouldShrink ? 0.35 : 0.55,
+          scale: shouldShrink ? target.scale * 1.15 : 1,
+          x: target.x,
+          y: target.y,
+        }}
+        transition={{ duration: 1.4, ease: [0.65, 0, 0.35, 1] }}
+        style={{
+          position: 'absolute',
+          width: globeSize * 1.25,
+          height: globeSize * 1.25,
+          borderRadius: '50%',
+          background:
+            'radial-gradient(circle, rgba(255,122,46,0.38) 0%, rgba(255,122,46,0) 65%)',
+          pointerEvents: 'none',
+          willChange: 'transform, opacity',
+        }}
+      />
+      <motion.div
+        initial={false}
+        animate={target}
+        transition={{ duration: 1.4, ease: [0.65, 0, 0.35, 1] }}
+        style={{
+          willChange: 'transform',
+          transformOrigin: 'center center',
+        }}
+      >
+        <Globe size={globeSize} paused={shouldShrink} />
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function Landing() {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [phase, setPhase] = useState('loading'); // 'loading' | 'expanded' | 'shrinking' | 'done'
+  const [reveal, setReveal] = useState(false);
+  const [targetRect, setTargetRect] = useState(null);
+  const heroGlobeRef = useRef(null);
+  const isPhone = useIsPhone();
 
   useEffect(() => setMounted(true), []);
 
@@ -986,9 +1180,9 @@ export default function Landing() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Lock scroll while the loader is showing; scroll to top on reveal
+  // Lock scroll until the full reveal completes
   useEffect(() => {
-    if (loading) {
+    if (phase !== 'done') {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -997,7 +1191,7 @@ export default function Landing() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [loading]);
+  }, [phase]);
 
   useEffect(() => {
     const fontsReady =
@@ -1024,20 +1218,83 @@ export default function Landing() {
     };
   }, []);
 
+  // Phase orchestration — fires once when the loader is told to leave.
+  useEffect(() => {
+    if (loading) return;
+
+    // Timings (ms):
+    const LOADER_EXIT = 1000; // matches Loader's slide-up duration
+    const HOLD = 450; // brief beat while globe sits full-screen
+    const SHRINK = 1400; // matches GlobeRevealOverlay transition duration
+    const REVEAL_OFFSET = 600; // text begins during last ~800ms of shrink
+
+    setPhase('expanded');
+
+    const tShrink = window.setTimeout(() => {
+      if (heroGlobeRef.current) {
+        const rect = heroGlobeRef.current.getBoundingClientRect();
+        setTargetRect({
+          cx: rect.left + rect.width / 2,
+          cy: rect.top + rect.height / 2,
+          size: rect.width,
+        });
+      }
+      setPhase('shrinking');
+    }, LOADER_EXIT + HOLD);
+
+    const tReveal = window.setTimeout(
+      () => setReveal(true),
+      LOADER_EXIT + HOLD + REVEAL_OFFSET
+    );
+
+    const tDone = window.setTimeout(
+      () => setPhase('done'),
+      LOADER_EXIT + HOLD + SHRINK
+    );
+
+    return () => {
+      window.clearTimeout(tShrink);
+      window.clearTimeout(tReveal);
+      window.clearTimeout(tDone);
+    };
+  }, [loading]);
+
+  const overlayActive = phase === 'expanded' || phase === 'shrinking';
+  const heroGlobeVisible = phase === 'done';
+  const interactive = phase === 'done';
+
   return (
     <>
       <style>{globalCSS}</style>
-      {mounted && !loading && <CustomCursor />}
+      {mounted && interactive && !isPhone && <CustomCursor />}
       {/* Mount content from the start so Three.js, borders, and fonts finish initializing behind the loader — makes the reveal smooth */}
-      <div aria-hidden={loading} style={{ pointerEvents: loading ? 'none' : 'auto' }}>
-        <Nav />
-        <Hero paused={loading} />
+      <div
+        aria-hidden={!interactive}
+        style={{ pointerEvents: interactive ? 'auto' : 'none' }}
+      >
+        <Nav reveal={reveal} />
+        <Hero
+          paused={!interactive}
+          reveal={reveal}
+          globeRef={heroGlobeRef}
+          globeVisible={heroGlobeVisible}
+          isPhone={isPhone}
+        />
         <Features />
         <Metrics />
         <Testimonial />
-        <CTA />
+        <CTA isPhone={isPhone} />
         <Footer />
       </div>
+      <AnimatePresence>
+        {overlayActive && (
+          <GlobeRevealOverlay
+            key="globe-overlay"
+            phase={phase}
+            targetRect={targetRect}
+          />
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {loading && <Loader key="loader" />}
       </AnimatePresence>

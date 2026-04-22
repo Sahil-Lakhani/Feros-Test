@@ -1,16 +1,17 @@
 import { motion } from 'framer-motion';
 
 const EASE = [0.2, 0.8, 0.2, 1];
+const EXIT_EASE = [0.76, 0, 0.24, 1];
 const BG = '#F4EADC';
 const ACCENT = '#FF7A2E';
 
 export default function Loader() {
   return (
     <motion.div
-      initial={{ opacity: 1 }}
+      initial={{ y: 0 }}
       exit={{
-        opacity: 0,
-        transition: { duration: 0.9, ease: [0.4, 0, 0.2, 1] },
+        y: '-100%',
+        transition: { duration: 1.0, ease: EXIT_EASE },
       }}
       style={{
         position: 'fixed',
@@ -23,7 +24,8 @@ export default function Loader() {
         flexDirection: 'column',
         gap: 28,
         overflow: 'hidden',
-        willChange: 'opacity',
+        willChange: 'transform',
+        boxShadow: '0 24px 48px rgba(0,0,0,0.08)',
       }}
     >
       {/* Soft glow behind logo */}
@@ -32,8 +34,8 @@ export default function Loader() {
         transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
         style={{
           position: 'absolute',
-          width: 360,
-          height: 360,
+          width: 'min(360px, 85vw)',
+          height: 'min(360px, 85vw)',
           borderRadius: '50%',
           background:
             'radial-gradient(circle, rgba(255,122,46,0.45) 0%, rgba(255,122,46,0) 65%)',
@@ -55,7 +57,7 @@ export default function Loader() {
           scale: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
         }}
         style={{
-          width: 140,
+          width: 'clamp(110px, 28vw, 140px)',
           height: 'auto',
           position: 'relative',
           zIndex: 1,
@@ -67,7 +69,7 @@ export default function Loader() {
       <div
         style={{
           position: 'relative',
-          width: 180,
+          width: 'min(180px, 55vw)',
           height: 2,
           background: 'rgba(26,26,31,0.1)',
           borderRadius: 2,
