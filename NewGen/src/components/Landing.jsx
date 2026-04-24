@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import Globe from './Globe';
 import Loader from './Loader';
 import useIsPhone from '../hooks/useIsPhone';
@@ -40,16 +41,19 @@ html { scrollbar-gutter: stable; }
 html, body, #root { margin: 0; padding: 0; }
 body {
   font-family: ${fonts.body};
-  cursor: none;
   background: ${light.bg};
   color: ${light.ink};
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
+body.cursor-hidden { cursor: none; }
+body.cursor-hidden button,
+body.cursor-hidden a { cursor: none; }
+input, textarea, select { cursor: auto; }
 canvas { cursor: grab !important; }
 canvas:active { cursor: grabbing !important; }
 a { color: inherit; text-decoration: none; }
-button { font-family: inherit; cursor: none; border: none; background: none; }
+button { font-family: inherit; border: none; background: none; }
 .section-label {
   font-family: ${fonts.mono};
   font-size: 11px;
@@ -156,32 +160,12 @@ function Nav({ reveal = true }) {
         border: '1px solid rgba(26, 26, 31, 0.08)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div
-          style={{
-            width: 32,
-            height: 32,
-            background: light.accent,
-            borderRadius: 8,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontSize: 18,
-          }}
-        >
-          ⚡
-        </div>
-        <span
-          style={{
-            fontFamily: fonts.display,
-            fontSize: 20,
-            fontWeight: 500,
-            color: light.ink,
-          }}
-        >
-          VoltSpot
-        </span>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <img
+          src="/logo-light.png"
+          alt="VoltSpot"
+          style={{ height: 28, width: 'auto', display: 'block' }}
+        />
       </div>
       <div
         className="nav-center"
@@ -193,16 +177,28 @@ function Nav({ reveal = true }) {
           fontWeight: 500,
         }}
       >
-        {['How it works', 'Locations', 'For business', 'Pricing', 'About'].map(
-          (l) => (
-            <a key={l} href="#">{l}</a>
+        {['How it works', 'Locations', 'For business', 'Pricing', 'About', 'Profit Calculator'].map((l) =>
+          l === 'Profit Calculator' ? (
+            <Link
+              key={l}
+              to="/calculator"
+              style={{ fontSize: 'inherit', color: 'inherit', fontWeight: 'inherit', textDecoration: 'none' }}
+            >
+              {l}
+            </Link>
+          ) : (
+            <button
+              key={l}
+              type="button"
+              onClick={(e) => e.preventDefault()}
+              style={{ fontSize: 'inherit', color: 'inherit', fontWeight: 'inherit', padding: 0 }}
+            >
+              {l}
+            </button>
           )
         )}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <a href="#" className="nav-signin" style={{ fontSize: 14, color: light.ink, fontWeight: 500 }}>
-          Sign in
-        </a>
         <motion.button
           className="nav-cta"
           whileHover={{ scale: 1.02 }}
@@ -468,7 +464,7 @@ function Hero({ paused, reveal = true, globeRef, globeVisible = true, isPhone = 
             transition={{ duration: 0.35, ease: 'easeOut' }}
             style={{ position: 'relative', zIndex: 1 }}
           >
-            <Globe size={isPhone ? 280 : 500} paused={paused} />
+            {globeVisible && <Globe size={isPhone ? 280 : 500} paused={paused} />}
           </motion.div>
 
           {/* Floating chip top-right */}
@@ -1002,31 +998,17 @@ function Footer() {
         }}
       >
         <div className="footer-brand">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-            <div
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+            <img
+              src="/logo-light.png"
+              alt="VoltSpot"
               style={{
-                width: 32,
-                height: 32,
-                background: dark.accent,
-                borderRadius: 8,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                fontSize: 18,
+                height: 28,
+                width: 'auto',
+                display: 'block',
+                filter: 'invert(1) hue-rotate(180deg)',
               }}
-            >
-              ⚡
-            </div>
-            <span
-              style={{
-                fontFamily: fonts.display,
-                fontSize: 20,
-                fontWeight: 500,
-              }}
-            >
-              VoltSpot
-            </span>
+            />
           </div>
           <p
             style={{
@@ -1049,13 +1031,20 @@ function Footer() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {c.links.map((l) => (
-                <a
+                <button
                   key={l}
-                  href="#"
-                  style={{ fontSize: 14, color: dark.ink, opacity: 0.85 }}
+                  type="button"
+                  onClick={(e) => e.preventDefault()}
+                  style={{
+                    fontSize: 14,
+                    color: dark.ink,
+                    opacity: 0.85,
+                    padding: 0,
+                    textAlign: 'left',
+                  }}
                 >
                   {l}
-                </a>
+                </button>
               ))}
             </div>
           </div>
@@ -1159,11 +1148,15 @@ function GlobeRevealOverlay({ phase, targetRect }) {
   );
 }
 
+// Module-level flag — survives SPA route changes, resets on full page reload.
+// Used so the loader + globe intro animation only plays on the first visit.
+let hasPlayedIntro = false;
+
 export default function Landing() {
   const [mounted, setMounted] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [phase, setPhase] = useState('loading'); // 'loading' | 'expanded' | 'shrinking' | 'done'
-  const [reveal, setReveal] = useState(false);
+  const [loading, setLoading] = useState(!hasPlayedIntro);
+  const [phase, setPhase] = useState(hasPlayedIntro ? 'done' : 'loading'); // 'loading' | 'expanded' | 'shrinking' | 'done'
+  const [reveal, setReveal] = useState(hasPlayedIntro);
   const [targetRect, setTargetRect] = useState(null);
   const heroGlobeRef = useRef(null);
   const isPhone = useIsPhone();
@@ -1194,6 +1187,8 @@ export default function Landing() {
   }, [phase]);
 
   useEffect(() => {
+    if (hasPlayedIntro) return;
+
     const fontsReady =
       typeof document !== 'undefined' && document.fonts?.ready
         ? document.fonts.ready
@@ -1220,6 +1215,7 @@ export default function Landing() {
 
   // Phase orchestration — fires once when the loader is told to leave.
   useEffect(() => {
+    if (hasPlayedIntro) return;
     if (loading) return;
 
     // Timings (ms):
@@ -1248,7 +1244,10 @@ export default function Landing() {
     );
 
     const tDone = window.setTimeout(
-      () => setPhase('done'),
+      () => {
+        setPhase('done');
+        hasPlayedIntro = true;
+      },
       LOADER_EXIT + HOLD + SHRINK
     );
 
@@ -1262,6 +1261,18 @@ export default function Landing() {
   const overlayActive = phase === 'expanded' || phase === 'shrinking';
   const heroGlobeVisible = phase === 'done';
   const interactive = phase === 'done';
+
+  // Scope `cursor: none` to the window where CustomCursor is actually rendered,
+  // so the loader + reveal animation keep the real pointer visible.
+  useEffect(() => {
+    const cursorVisible = mounted && interactive && !isPhone;
+    if (cursorVisible) {
+      document.body.classList.add('cursor-hidden');
+    } else {
+      document.body.classList.remove('cursor-hidden');
+    }
+    return () => document.body.classList.remove('cursor-hidden');
+  }, [mounted, interactive, isPhone]);
 
   return (
     <>
