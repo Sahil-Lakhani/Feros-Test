@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { feature } from 'topojson-client';
+import countriesTopo from 'world-atlas/countries-110m.json';
 
 const ORANGE = 0xff7a2e;
 const GERMANY_LAT = 51.1657;
@@ -96,31 +98,25 @@ export default function Globe({ size = 500, paused = false }) {
       opacity: 0.7,
     });
 
-    (async () => {
-      try {
-        const topoResp = await fetch(
-          'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
-        );
-        const topo = await topoResp.json();
-        const topojsonMod = await import(
-          /* @vite-ignore */ 'https://cdn.jsdelivr.net/npm/topojson-client@3/+esm'
-        );
-        const feature = topojsonMod.feature(topo, topo.objects.countries);
-        feature.features.forEach((f) => {
-          const geom = f.geometry;
-          if (!geom) return;
-          if (geom.type === 'Polygon') {
-            drawRings(geom.coordinates, bordersGroup, 1.002, borderMat);
-          } else if (geom.type === 'MultiPolygon') {
-            geom.coordinates.forEach((poly) => {
-              drawRings(poly, bordersGroup, 1.002, borderMat);
-            });
-          }
-        });
-      } catch (err) {
-        console.warn('Failed to load country borders', err);
-      }
-    })();
+    try {
+      const countries = feature(
+        countriesTopo,
+        countriesTopo.objects.countries
+      );
+      countries.features.forEach((f) => {
+        const geom = f.geometry;
+        if (!geom) return;
+        if (geom.type === 'Polygon') {
+          drawRings(geom.coordinates, bordersGroup, 1.002, borderMat);
+        } else if (geom.type === 'MultiPolygon') {
+          geom.coordinates.forEach((poly) => {
+            drawRings(poly, bordersGroup, 1.002, borderMat);
+          });
+        }
+      });
+    } catch (err) {
+      console.warn('Failed to load country borders', err);
+    }
 
     // Germany marker
     const markerGroup = new THREE.Group();
