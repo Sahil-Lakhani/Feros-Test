@@ -60,6 +60,37 @@ button { font-family: inherit; border: none; background: none; }
   letter-spacing: 0.15em;
   text-transform: uppercase;
 }
+.nav-center a,
+.nav-center button {
+  position: relative;
+  padding-bottom: 2px;
+  transition: color 0.2s ease;
+}
+.nav-center a::after,
+.nav-center button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: ${light.accent};
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+.nav-center a:hover,
+.nav-center button:hover {
+  color: ${light.accent};
+}
+.nav-center a:hover::after,
+.nav-center button:hover::after,
+.nav-center a:focus-visible::after,
+.nav-center button:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
 @media (max-width: 900px) {
   .nav-center { display: none !important; }
   .hero-grid { grid-template-columns: 1fr !important; }
@@ -76,9 +107,6 @@ button { font-family: inherit; border: none; background: none; }
   .hero-stats { gap: 24px !important; }
   .hero-chip { display: none !important; }
   .hero-drag-label { font-size: 10px !important; }
-
-  .nav-signin { display: none !important; }
-  .nav-cta { padding: 8px 14px !important; font-size: 13px !important; }
 
   .features-section { padding: 80px 20px !important; }
   .features-card { padding: 24px 20px !important; min-height: 200px !important; }
@@ -105,6 +133,50 @@ button { font-family: inherit; border: none; background: none; }
   }
 }
 `;
+
+function AppleIcon({ size = 18 }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="currentColor"
+      aria-hidden="true"
+      style={{ display: 'block', flexShrink: 0 }}
+    >
+      <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+    </svg>
+  );
+}
+
+function PlayStoreIcon({ size = 18 }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      aria-hidden="true"
+      style={{ display: 'block', flexShrink: 0 }}
+    >
+      <path
+        d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92z"
+        fill="#00D4FF"
+      />
+      <path
+        d="M16.081 15.487L6.077 21.278l7.715-9.278 2.289 3.487z"
+        fill="#FFBC00"
+      />
+      <path
+        d="M20.16 10.82c.72.39.72 1.38 0 1.77l-3.08 1.77-2.29-2.36 2.29-2.36 3.08 1.18z"
+        fill="#00D172"
+      />
+      <path
+        d="M6.077 2.722l10.004 6.032-2.289 3.246L3.609 1.814a1 1 0 01.49-.13c.34 0 .67.17.978.338l1 .7z"
+        fill="#FF3A44"
+      />
+    </svg>
+  );
+}
 
 function CustomCursor() {
   const ref = useRef(null);
@@ -219,7 +291,7 @@ function Nav({ reveal = true }) {
   );
 }
 
-function Hero({ paused, reveal = true, globeRef, globeVisible = true, isPhone = false }) {
+function Hero({ paused, reveal = true, globeRef, globeMounted = true, globeVisible = true, isPhone = false }) {
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 0.3], [0, -80]);
 
@@ -462,9 +534,14 @@ function Hero({ paused, reveal = true, globeRef, globeVisible = true, isPhone = 
             initial={false}
             animate={{ opacity: globeVisible ? 1 : 0 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
-            style={{ position: 'relative', zIndex: 1 }}
+            style={{
+              position: 'relative',
+              zIndex: 1,
+              width: isPhone ? 280 : 500,
+              height: isPhone ? 280 : 500,
+            }}
           >
-            {globeVisible && <Globe size={isPhone ? 280 : 500} paused={paused} />}
+            {globeMounted && <Globe size={isPhone ? 280 : 500} paused={paused} />}
           </motion.div>
 
           {/* Floating chip top-right */}
@@ -946,21 +1023,33 @@ function CTA({ isPhone = false }) {
               flexWrap: 'wrap',
             }}
           >
-            {['App Store', 'Google Play'].map((label) => (
+            {[
+              { label: 'App Store', Icon: AppleIcon, caption: 'Download on the' },
+              { label: 'Google Play', Icon: PlayStoreIcon, caption: 'Get it on' },
+            ].map(({ label, Icon, caption }) => (
               <motion.button
                 key={label}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 12,
                   background: dark.bg,
                   color: light.bg,
-                  padding: '14px 28px',
+                  padding: '12px 22px',
                   borderRadius: 100,
                   fontSize: 15,
                   fontWeight: 500,
                 }}
               >
-                {label}
+                <Icon size={22} />
+                <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.1 }}>
+                  <span style={{ fontSize: 10, fontWeight: 400, opacity: 0.75, letterSpacing: '0.04em' }}>
+                    {caption}
+                  </span>
+                  <span style={{ fontSize: 15, fontWeight: 600 }}>{label}</span>
+                </span>
               </motion.button>
             ))}
           </motion.div>
@@ -1259,6 +1348,13 @@ export default function Landing() {
   }, [loading]);
 
   const overlayActive = phase === 'expanded' || phase === 'shrinking';
+  // Mount the Hero Three.js instance as soon as the overlay begins shrinking —
+  // this gives the renderer, scene, and country-border geometry ~1.4s to
+  // finish initializing before the overlay unmounts at phase='done', so the
+  // handoff looks seamless instead of a new globe popping in.
+  const heroGlobeMounted = phase === 'shrinking' || phase === 'done';
+  // Opacity stays 0 until the overlay has fully shrunk to its target — so we
+  // don't see two globes stacked at the same position during the shrink.
   const heroGlobeVisible = phase === 'done';
   const interactive = phase === 'done';
 
@@ -1288,6 +1384,7 @@ export default function Landing() {
           paused={!interactive}
           reveal={reveal}
           globeRef={heroGlobeRef}
+          globeMounted={heroGlobeMounted}
           globeVisible={heroGlobeVisible}
           isPhone={isPhone}
         />
